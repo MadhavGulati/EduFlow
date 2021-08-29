@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>EduFlow</title>
+        <link rel="stylesheet" href="style.css">
+        <style>
+
+
+            h1 {
+                color: #3B8BE4;
+            }
+
+
+        </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <h1>EDUFLOW</h1>
+        <div>
+        <input type="checkbox" name="course1" value="Bike">
+        <label for="vehicle1">AP Biology</label><br>
+        <input type="checkbox" name="vehicle2" value="Car">
+        <label for="vehicle2">AP Calculus</label><br>
+        <input type="checkbox" name="vehicle3" value="Boat">
+        <label for="vehicle3">AP Chemistry</label><br>
+        </div>
+        <button onclick="submitBtn()">Submit</button>
+    </body>
+    <script>
+        function submitBtn() {
+            window.location.href = "questions.html"
+        }
+    </script>
+</html>

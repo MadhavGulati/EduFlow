@@ -1,0 +1,18 @@
+{
+    "users": [
+        {
+            "username": "",
+            "email": "",
+            "courses": []
+        }
+    ],
+    "questions": [
+        {
+            "userposted": "",
+            "question": "",
+            "picture": "",
+            "timestamp": ""
+        }
+    ]
+
+}

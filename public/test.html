@@ -1,0 +1,196 @@
+<html>
+<title>Questions</title>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">     
+    <style>
+        h1, h2, p, a, li {
+            font-family: "Montserrat", sans-serif;
+        }
+        h1{
+            color: #3B8BE4;
+            font-size: 90px;
+        }
+        h2{
+            font-size: 30px;
+            color:white;
+        }
+        /* The side navigation menu */
+        .sidebar {
+        margin: 0;
+        padding: 0;
+        width: 200px;
+        background-color: #f1f1f1;
+        position: sticky;
+        top: 0;
+        float: left;
+        height: 100vh;
+        overflow: auto;
+        }
+
+        /* Sidebar links */
+        .sidebar a {
+        display: block;
+        color: black;
+        padding: 16px;
+        text-decoration: none;
+        }
+
+        /* Active/current link */
+        .sidebar a.active {
+        background-color: #3B8BE4;
+        color: white;
+        }
+
+        /* Links on mouse-over */
+        .sidebar a:hover:not(.active) {
+        background-color: #555;
+        color: white;
+        }
+
+        /* Page content. The value of the margin-left property should match the value of the sidebar's width property */
+        div.content {
+        margin-left: 200px;
+        padding: 40px;
+        background-color: #3b8be4;
+        }
+
+        /* On screens that are less than 700px wide, make the sidebar into a topbar */
+        @media screen and (max-width: 700px) {
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+        .sidebar a {float: left;}
+        div.content {margin-left: 0;}
+        }
+
+        /* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+        @media screen and (max-width: 400px) {
+        .sidebar a {
+            text-align: center;
+            float: none;
+        }
+        }
+
+        .questions li {
+            padding-top:10px;
+            padding-bottom:10px;
+        }
+
+        .header-ed {
+            background-color: white;
+            padding: 10px;
+        }
+
+        .question {
+            font-size: 25px;
+            background-color: #555;
+            padding: 30px;
+        }
+        .answer {
+            background-color: #3B8BE4; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            float: left;
+        }
+        p, form {
+            font-family: 'Monstserrat', sans-serif;
+            color: white;
+        }
+        #subjectBox, #questionBox {
+            border-radius: 5px;
+            border-width: 0px;
+            height: 25px;
+            width: 300px;
+        }
+
+        .course {
+            padding-left: 40px;
+            font-size: 40px;
+            color: white;
+        }
+
+</style>
+</head>
+<body>
+<div class="header-ed">
+    <h1 style="text-align: center; cursor: pointer;" onclick="window.location.href= '/'">EDUFLOW</h1>
+</div>
+ <!-- The sidebar -->
+ <div class="sidebar">
+    <a name="math" class="active" onclick="switchSubj('math')">MATH</a>
+    <a name="ela" onclick="switchSubj('ela')">ELA</a>
+    <a name="science" onclick="switchSubj('science')">SCIENCE</a>
+    <a name="social studies" onclick="switchSubj('social studies')">SOCIAL STUDIES</a>
+  </div>
+  
+  <!-- Page content -->
+  <div class="content">
+
+    <h2 class="course">MATH</h2>
+    <div style="height: 400px; width: 600px; background-color: #373737; border-radius: 20px; padding: 40px; margin: 40px; overflow-y:auto;">
+        <ul class="questions" id="questions">
+            
+        </ul>
+    </div>
+
+    <div style="padding-left: 40px">
+    <form>
+        <label><h2>Ask a Question?</h2></label>
+        Subject: <input id="subjectBox" type="text" placeholder="What class/subject is this for?"><br><br>
+        Question: <input id="questionBox" type="text" name="question" placeholder="What can we help you with?">
+    </form><br>
+    <button id="submitQuestions" onclick="submitQ(this)">SUBMIT</button>
+    <div>
+
+
+  </div> 
+      
+</body>
+
+<script>
+    var questions = {
+      "math" :["what is 1+1", "what is 2+2"],
+      "ela" : ["how did romeo and juliet end?"],
+      "science" : ["what is the atomic mass of oxygen?"],
+      "social studies" : ["where did christopher columbus land?"]
+    }
+
+    window.onload = function() {
+        switchSubj(document.querySelectorAll(".sidebar a")[0].name)
+    }
+
+    function submitQ() {
+        document.getElementById("questions").innerHTML += ("<div class='question'><h2>" + questions[subject] + "</h2><form action=''><label for='fname'>Answers</label><br><input type='text' id='fname' name='firstname' placeholder='Your answer...'></form><button onclick='answerBtn(this.parentElement)'>SUBMIT</button></div>")
+    }
+    function answerBtn(param) {
+      param.children[1].remove()
+      param.innerHTML += "<br><p>" + param.children[1][0].value + "</p>";
+    }
+
+    function switchSubj(subject) {
+      document.getElementById("questions").innerHTML = "";
+      for (question in questions[subject]) {
+        document.getElementById("questions").innerHTML += ("<div class='question'><h2>" + questions[subject][question] + "</h2><form action=''><label for='fname'>Answers</label><br><input type='text' id='fname' name='firstname' placeholder='Your answer...'></form><button onclick='answerBtn(this.parentElement)'>SUBMIT</button></div><br>")
+      }
+      let t = document.querySelectorAll(".sidebar a").length
+      for (i =0; i < t; i++) {
+        document.querySelectorAll(".sidebar a")[i].classList.remove("active")
+        if (document.querySelectorAll(".sidebar a")[i].name==subject) {
+            document.querySelectorAll(".sidebar a")[i].className="active"
+        }
+      }
+      
+    }
+</script>
+
+</html>

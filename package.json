@@ -1,0 +1,10 @@
+{
+    "name": "Wafflehacks",
+    "main": "index.js",
+    "version": "0.0.1",
+    "description": "video synchronizing app",
+    "dependencies": {
+        "express": "^4.17.1",
+        "googleapis": "^84.0.0"
+    }
+}
