@@ -21,7 +21,7 @@
         margin: 0;
         padding: 0;
         width: 200px;
-        background-color: #f1f1f1;
+        background-color: #161616;
         position: sticky;
         top: 0;
         float: left;
@@ -32,7 +32,7 @@
         /* Sidebar links */
         .sidebar a {
         display: block;
-        color: black;
+        color: white;
         padding: 16px;
         text-decoration: none;
         }
@@ -81,7 +81,7 @@
         }
 
         .header-ed {
-            background-color: white;
+            background-color: #161616;
             padding: 10px;
         }
 
@@ -118,6 +118,25 @@
             font-size: 40px;
             color: white;
         }
+        .question {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        #questionBox {
+            background-color: white;
+        }
+
+        #submitQuestions {
+            background-color: rgb(56, 56, 56);
+            color: white;
+            width: 75px;
+            height: 30px;
+            font-family: "Montserrat", sans-serif;
+            border-radius: 10px;
+            border: 0px;
+            margin-top: 10px;
+        }
 
 </style>
 </head>
@@ -127,16 +146,16 @@
 </div>
  <!-- The sidebar -->
  <div class="sidebar">
-    <a name="math" class="active" onclick="switchSubj('math')">MATH</a>
-    <a name="ela" onclick="switchSubj('ela')">ELA</a>
-    <a name="science" onclick="switchSubj('science')">SCIENCE</a>
-    <a name="social studies" onclick="switchSubj('social studies')">SOCIAL STUDIES</a>
+    <a name="MATH" class="active" onclick="switchSubj('MATH')">MATH</a>
+    <a name="ELA" onclick="switchSubj('ELA')">ELA</a>
+    <a name="SCIENCE" onclick="switchSubj('SCIENCE')">SCIENCE</a>
+    <a name="SOCIAL STUDIES" onclick="switchSubj('SOCIAL STUDIES')">SOCIAL STUDIES</a>
   </div>
   
   <!-- Page content -->
   <div class="content">
 
-    <h2 class="course">MATH</h2>
+    <h2 id="courseName" class="course">MATH</h2>
     <div style="height: 400px; width: 600px; background-color: #373737; border-radius: 20px; padding: 40px; margin: 40px; overflow-y:auto;">
         <ul class="questions" id="questions">
             
@@ -146,10 +165,9 @@
     <div style="padding-left: 40px">
     <form>
         <label><h2>Ask a Question?</h2></label>
-        Subject: <input id="subjectBox" type="text" placeholder="What class/subject is this for?"><br><br>
         Question: <input id="questionBox" type="text" name="question" placeholder="What can we help you with?">
-    </form><br>
-    <button id="submitQuestions" onclick="submitQ(this)">SUBMIT</button>
+    </form>
+    <button id="submitQuestions" onclick="submitQ(this)">submit</button>
     <div>
 
 
@@ -157,12 +175,17 @@
       
 </body>
 
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    var socket = io();
+    </script>
+
 <script>
     var questions = {
-      "math" :["what is 1+1", "what is 2+2"],
-      "ela" : ["how did romeo and juliet end?"],
-      "science" : ["what is the atomic mass of oxygen?"],
-      "social studies" : ["where did christopher columbus land?"]
+      "MATH" :[["What is 1+1", ""], ["James has 4 balls, but loses one. How many does he have now?", "James has 3 balls"], ["what is 2+2", ""]],
+      "ELA" : [["How did romeo and juliet end?", ""], ["What is a metaphor?", ""]],
+      "SCIENCE" : [["what is the atomic mass of oxygen?", ""], ["What is the difference between a plant and animal cell?", ""]],
+      "SOCIAL STUDIES" : [["where did christopher columbus land?", ""], ["When did the United States Gain Independence?", ""]]
     }
 
     window.onload = function() {
@@ -170,17 +193,30 @@
     }
 
     function submitQ() {
-        document.getElementById("questions").innerHTML += ("<div class='question'><h2>" + questions[subject] + "</h2><form action=''><label for='fname'>Answers</label><br><input type='text' id='fname' name='firstname' placeholder='Your answer...'></form><button onclick='answerBtn(this.parentElement)'>SUBMIT</button></div>")
+        let subjName = document.getElementById("courseName").innerHTML;
+        questions[subjName].push([document.getElementById("questionBox").value, ""])
+        socket.emit('new question', {array: questions, question: document.getElementById("questionBox").value});
+        console.log("emitted")
+        document.getElementById("questions").innerHTML += ("<div class='question'><h2>" + questions[subjName][questions[subjName].length-1][0] + "</h2><form action=''><label for='fname'>Answers</label><input type='text' id='fname' name='firstname' placeholder='Your answer...'></form><button onclick='answerBtn(this.parentElement)'>SUBMIT</button></div>")
     }
     function answerBtn(param) {
-      param.children[1].remove()
-      param.innerHTML += "<br><p>" + param.children[1][0].value + "</p>";
+        questions[document.getElementById("courseName").innerHTML][Array.from(document.querySelector("#questions").children).indexOf(param)][1] = param.children[1][0].value;
+        param.innerHTML += "<p>" + param.children[1][0].value + "</p>";
+        param.children[1].remove()
+        param.children[1].remove()
+        socket.emit('new answer', {array: questions, question: document.getElementById("questionBox").value});
     }
 
     function switchSubj(subject) {
       document.getElementById("questions").innerHTML = "";
+      document.getElementById("courseName").innerHTML = subject;
       for (question in questions[subject]) {
-        document.getElementById("questions").innerHTML += ("<div class='question'><h2>" + questions[subject][question] + "</h2><form action=''><label for='fname'>Answers</label><br><input type='text' id='fname' name='firstname' placeholder='Your answer...'></form><button onclick='answerBtn(this.parentElement)'>SUBMIT</button></div><br>")
+          if (questions[subject][question][1].length <= 0) {
+            document.getElementById("questions").innerHTML += ("<div class='question'><h2>" + questions[subject][question][0] + "</h2><form action=''><label for='fname'>Answers</label><input type='text' id='fname' name='firstname' placeholder='Your answer...'></form><button onclick='answerBtn(this.parentElement)'>SUBMIT</button></div>")
+          }
+          else {
+            document.getElementById("questions").innerHTML += "<div class='question'><h2>" + questions[subject][question][0] + "</h2><p>" + questions[subject][question][1] +  "</p></div>"
+          }
       }
       let t = document.querySelectorAll(".sidebar a").length
       for (i =0; i < t; i++) {
@@ -191,6 +227,21 @@
       }
       
     }
+
+
+
+    socket.on('new question', function(msg) {
+        questions = msg.array;
+        console.log(questions)
+        switchSubj(document.getElementById("courseName").innerHTML);
+    });
+    socket.on('new answer', function(msg) {
+        questions = msg.array;
+        console.log(questions)
+        switchSubj(document.getElementById("courseName").innerHTML);
+    });
+
+
 </script>
 
 </html>
